@@ -27,7 +27,7 @@ BEGIN
 		BEGIN TRAN
 
 		MERGE dbo.REC_Recipe Target
-		USING ( SELECT * FROM [NAACAB-SCH01].PlanetTogether_Data_Test.Setup.vInterfaceRecipeManagementSystem CROSS APPLY dbo.REC_Project) AS Source
+		USING ( SELECT DISTINCT setupnumber, ProjectUUID FROM [NAACAB-SCH01].PlanetTogether_Data_Test.Setup.vInterfaceRecipeManagementSystem CROSS APPLY dbo.REC_Project) AS Source
 		ON Target.name = Source.SetupNumber
 		WHEN NOT MATCHED BY TARGET THEN
 		INSERT(ProjectUUID,ParentRecipeUUID,Name, State,[Group])
@@ -93,6 +93,5 @@ BEGIN
 	END CATCH
 
 END
-
 
 GO

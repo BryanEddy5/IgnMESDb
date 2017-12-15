@@ -7,12 +7,10 @@ CREATE TABLE [dbo].[REC_ProdItem]
 [SubProductCodeMask] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [EditNo] [int] NOT NULL,
 [Deleted] [int] NOT NULL,
-[TimeStamp] [datetime] NOT NULL,
-[DateRevised] [datetime] NULL CONSTRAINT [DF_REC_ProdItem_DateRevised] DEFAULT (getdate()),
-[RevisedBy] [nvarchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_REC_ProdItem_RevisedBy] DEFAULT (suser_sname())
+[TimeStamp] [datetime] NOT NULL
 ) ON [PRIMARY]
 GO
-ALTER TABLE [dbo].[REC_ProdItem] ADD CONSTRAINT [PK__REC_Prod__3214EC275AC92E35] PRIMARY KEY CLUSTERED  ([ID]) ON [PRIMARY]
+ALTER TABLE [dbo].[REC_ProdItem] ADD CONSTRAINT [PK__REC_Prod__3214EC27A2AF8021] PRIMARY KEY CLUSTERED  ([ID]) ON [PRIMARY]
 GO
 CREATE NONCLUSTERED INDEX [IX_Lookup] ON [dbo].[REC_ProdItem] ([ProdItemUUID], [ItemPath]) ON [PRIMARY]
 GO
