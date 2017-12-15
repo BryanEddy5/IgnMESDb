@@ -3,6 +3,7 @@ GO
 SET ANSI_NULLS ON
 GO
 
+
 /*
 -- =============================================
 -- Author:      Bryan Eddy
@@ -14,7 +15,7 @@ GO
 */
 
 CREATE PROCEDURE [APS].[usp_getSetupData]
-as
+AS
 SET NOCOUNT ON;
 BEGIN
 
@@ -47,14 +48,32 @@ BEGIN
 	--Update attribute value data 
 	BEGIN TRY
 		BEGIN TRAN
+
+			IF OBJECT_ID(N'tempdb..#SetupData', N'U') IS NOT NULL
+			DROP TABLE #SetupData;
+			SELECT * 
+			INTO #SetupData
+			FROM [NAACAB-SCH01].PlanetTogether_Data_Test.Setup.vInterfaceRecipeManagementSystem 
+
+			IF OBJECT_ID(N'tempdb..#RecipeValue', N'U') IS NOT NULL
+			DROP TABLE #RecipeValue;
+			;WITH cteRecipeVAlue
+			AS (
+				SELECT  J.ProjectUUID, machinename, p.name, k.AttributeValue,O.RecipeUUID, J.ProdItemUUID, p.ProdItemValueUUID, Setupnumber,
+				ROW_NUMBER() OVER (PARTITION BY J.ProjectUUID, machinename, p.name,O.RecipeUUID, J.ProdItemUUID, p.ProdItemValueUUID ORDER BY O.RecipeUUID,  J.ProdItemUUID, P.NAME) RowNumber
+				FROM [REC_ProdItem] J CROSS APPLY usf_splitstring(ItemPath,'\') G 
+				INNER JOIN #SetupData K ON K.MachineName = g.part
+				INNER JOIN dbo.REC_ProdItemValue p ON p.Name = k.AttributeName AND CAST(p.Description AS INT) = k.attributeid AND p.ProdItemUUID = J.ProdItemUUID
+				INNER JOIN dbo.REC_Recipe O ON O.name = SetupNumber
+				)
+			SELECT * 
+			INTO #RecipeValue
+			FROM cteRecipeVAlue
+			WHERE RowNumber =1
+
+
 			MERGE dbo.REC_RecipeValue Target
-			USING(SELECT  J.ProjectUUID, machinename, p.name, k.AttributeValue,O.RecipeUUID, J.ProdItemUUID, p.ProdItemValueUUID, Setupnumber
-					FROM [REC_ProdItem] J CROSS APPLY usf_splitstring(ItemPath,'\') G 
-					INNER JOIN [NAACAB-SCH01].PlanetTogether_Data_Test.Setup.vInterfaceRecipeManagementSystem K ON K.MachineName = g.part
-					INNER JOIN dbo.REC_ProdItemValue p ON p.Name = k.AttributeName AND CAST(p.Description AS INT) = k.attributeid AND p.ProdItemUUID = J.ProdItemUUID
-					INNER JOIN dbo.REC_Recipe O ON O.name = SetupNumber
-					--WHERE setupnumber = 'r881'
-					) AS Source
+			USING(SELECT * FROM #RecipeValue) AS Source
 			ON (Target.ProdItemUUID = Source.ProdItemUUID AND target.ProdItemValueUUID = source.ProdItemValueUUID AND target.RecipeUUID = Source.RecipeUUID)
 			WHEN MATCHED THEN
 			UPDATE SET target.Value = source.attributeValue

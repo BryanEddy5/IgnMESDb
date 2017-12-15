@@ -6,8 +6,38 @@ CREATE TABLE [dbo].[REC_RecipeValue]
 [ProdItemUUID] [varchar] (36) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [ProdItemValueUUID] [varchar] (36) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [Value] [varchar] (1024) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-[TimeStamp] [datetime] NOT NULL CONSTRAINT [DF_REC_RecipeValue_TimeStamp] DEFAULT (getdate())
+[TimeStamp] [datetime] NOT NULL CONSTRAINT [DF_REC_RecipeValue_TimeStamp] DEFAULT (getdate()),
+[DateRevised] [datetime] NULL CONSTRAINT [DF_REC_RecipeValue_DateRevised] DEFAULT (getdate()),
+[RevisedBy] [nvarchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
 ) ON [PRIMARY]
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
+GO
+-- =============================================
+-- Author:		Bryan Eddy
+-- Create date: 12/15/17
+-- Description:	Update the revision date and revised by fileds
+-- =============================================
+CREATE TRIGGER [dbo].[trg_RecipeValue] 
+   ON  [dbo].[REC_RecipeValue] 
+   AFTER UPDATE
+AS 
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+	IF UPDATE(value)
+		BEGIN
+			UPDATE K
+			SET k.Revisedby = SUSER_SNAME(), k.DateRevised = GETDATE()
+			FROM DBO.REC_RecipeValue k INNER JOIN inserted i ON k.ID = i.id
+		END 
+
+    -- Insert statements for trigger here
+
+END
 GO
 ALTER TABLE [dbo].[REC_RecipeValue] ADD CONSTRAINT [PK__REC_Reci__3214EC27156FC9E4] PRIMARY KEY CLUSTERED  ([ID]) ON [PRIMARY]
 GO
