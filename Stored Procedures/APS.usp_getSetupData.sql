@@ -9,8 +9,8 @@ GO
 -- Author:      Bryan Eddy
 -- Create date: 8/14/2017
 -- Description: Import data from NAACAB-SCH01 for PSS information
--- Version: 1
--- Update:	n/a
+-- Version: 2
+-- Update:	Changed insert to account for columns possibly not having a default.
 -- =============================================
 */
 
@@ -30,8 +30,11 @@ BEGIN
 		USING ( SELECT DISTINCT setupnumber, ProjectUUID FROM [NAACAB-SCH01].PlanetTogether_Data_Test.Setup.vInterfaceRecipeManagementSystem CROSS APPLY dbo.REC_Project) AS Source
 		ON Target.name = Source.SetupNumber
 		WHEN NOT MATCHED BY TARGET THEN
-		INSERT(ProjectUUID,ParentRecipeUUID,Name, State,[Group])
-		VALUES(SOURCE.ProjectUUID, '',SetupNumber,'','');
+		INSERT(ProjectUUID,ParentRecipeUUID,Name, State,[Group], RecipeUUID, Deleted, TimeStamp)
+		VALUES(SOURCE.ProjectUUID, '',SetupNumber,'','', NEWID(),0, GETDATE());
+		--INSERT INTO dbo.REC_Recipe(ProjectUUID,ParentRecipeUUID,Name, State,[Group])
+		--SELECT ProjectUUID, NEWID(),SetupNumber,'',''
+		--FROM [NAACAB-SCH01].PlanetTogether_Data_Test.Setup.vInterfaceRecipeManagementSystem  CROSS APPLY dbo.REC_Project
 		COMMIT TRAN
 	END TRY
 	BEGIN CATCH
@@ -78,8 +81,8 @@ BEGIN
 			WHEN MATCHED THEN
 			UPDATE SET target.Value = source.attributeValue
 			WHEN NOT MATCHED BY TARGET THEN
-				INSERT(RecipeUUID,ProdItemUUID,ProdItemValueUUID,Value)
-				VALUES(Source.RecipeUUID,Source.ProdItemUUID, Source.ProdItemValueUUID, AttributeValue);
+				INSERT(RecipeUUID,ProdItemUUID,ProdItemValueUUID,Value, RecipeValueUUID,TimeStamp)
+				VALUES(Source.RecipeUUID,Source.ProdItemUUID, Source.ProdItemValueUUID, AttributeValue, NEWID(),GETDATE());
 		COMMIT TRAN
 	END TRY
 	BEGIN CATCH
