@@ -5,7 +5,9 @@ CREATE TABLE [dbo].[MESEquipmentStateValue]
 [OriginalState] [int] NULL,
 [DifferedToUUID] [varchar] (36) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [DifferedState] [int] NULL,
-[TimeStamp] [datetime] NOT NULL
+[TimeStamp] [datetime] NOT NULL,
+[OriginalDifferedToUUID] [varchar] (36) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[SplitTimeStamp] [datetime] NULL
 ) ON [PRIMARY]
 GO
 CREATE NONCLUSTERED INDEX [IX_Primary] ON [dbo].[MESEquipmentStateValue] ([EquipmentUUID], [TimeStamp]) ON [PRIMARY]

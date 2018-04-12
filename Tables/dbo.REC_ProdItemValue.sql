@@ -14,7 +14,8 @@ CREATE TABLE [dbo].[REC_ProdItemValue]
 [EditNo] [int] NOT NULL CONSTRAINT [DF_REC_ProdItemValue_EditNo] DEFAULT ((0)),
 [Deleted] [int] NOT NULL CONSTRAINT [DF_REC_ProdItemValue_Deleted] DEFAULT ((0)),
 [SortOrder] [int] NULL,
-[TimeStamp] [datetime] NOT NULL CONSTRAINT [DF_REC_ProdItemValue_TimeStamp] DEFAULT (getdate())
+[TimeStamp] [datetime] NOT NULL CONSTRAINT [DF_REC_ProdItemValue_TimeStamp] DEFAULT (getdate()),
+[ProdItemGroupValueUUID] [uniqueidentifier] NULL
 ) ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[REC_ProdItemValue] ADD CONSTRAINT [PK__REC_Prod__3214EC27258F3BC6] PRIMARY KEY CLUSTERED  ([ID]) ON [PRIMARY]
