@@ -4,6 +4,7 @@ SET ANSI_NULLS ON
 GO
 
 
+
 /*
 Author:		Bryan Eddy
 Date:		4/6/2018
@@ -12,7 +13,7 @@ Version:	1
 Update:		N/A
 */
 CREATE VIEW  [dbo].[vRecipeReport]
-as
+AS
   SELECT  REC_Recipe.Name AS Setup,
                                 line.part AS Line, 
                                 ProdItem.Name AS SetupAttribute,
@@ -34,5 +35,5 @@ FROM    REC_ProdItemValue ProdItem
 			  INNER JOIN dbo.vMachineSetups D ON D.MachineID = M.MachineID AND D.SetupNumber = dbo.REC_Recipe.NAME AND D.AttributeID = ProdItem.Description  
 
 --WHERE REC_Recipe.Name = 'BT001'
-
+WHERE ISNUMERIC(ProdItem.Description) = 1
 GO
