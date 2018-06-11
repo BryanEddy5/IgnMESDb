@@ -32,9 +32,6 @@ BEGIN
 		WHEN NOT MATCHED BY TARGET THEN
 		INSERT(ProjectUUID,ParentRecipeUUID,Name, State,[Group], RecipeUUID, Deleted, TimeStamp)
 		VALUES(SOURCE.ProjectUUID, '',SetupNumber,'','', NEWID(),0, GETDATE());
-		--INSERT INTO dbo.REC_Recipe(ProjectUUID,ParentRecipeUUID,Name, State,[Group])
-		--SELECT ProjectUUID, NEWID(),SetupNumber,'',''
-		--FROM [NAACAB-SCH01].PlanetTogether_Data_Prod.Setup.vInterfaceRecipeManagementSystem  CROSS APPLY dbo.REC_Project
 		COMMIT TRAN
 	END TRY
 	BEGIN CATCH
@@ -64,15 +61,17 @@ BEGIN
 			AS (
 				SELECT  J.ProjectUUID, machinename, p.name, k.AttributeValue,O.RecipeUUID, J.ProdItemUUID, p.ProdItemValueUUID, Setupnumber,
 				ROW_NUMBER() OVER (PARTITION BY J.ProjectUUID, machinename, p.name,O.RecipeUUID, J.ProdItemUUID, p.ProdItemValueUUID ORDER BY O.RecipeUUID,  J.ProdItemUUID, P.NAME) RowNumber
+				, p.Description
 				FROM [REC_ProdItem] J CROSS APPLY usf_splitstring(ItemPath,'\') G 
 				INNER JOIN #SetupData K ON K.MachineName = g.part
 				INNER JOIN dbo.REC_ProdItemValue p ON p.Name = k.AttributeName AND CAST(p.Description AS INT) = k.attributeid AND p.ProdItemUUID = J.ProdItemUUID
 				INNER JOIN dbo.REC_Recipe O ON O.name = SetupNumber
+				WHERE ISNUMERIC(p.Description) =1
 				)
 			SELECT * 
 			INTO #RecipeValue
 			FROM cteRecipeVAlue
-			WHERE RowNumber =1
+			WHERE RowNumber =1 
 
 
 			MERGE dbo.REC_RecipeValue Target
