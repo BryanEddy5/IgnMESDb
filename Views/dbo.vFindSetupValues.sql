@@ -2,6 +2,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
+
 /*
 Author:		Bryan Eddy
 Desc:		View for setup search
@@ -11,7 +12,7 @@ Update:		n/a
 */
 
 CREATE VIEW	[dbo].[vFindSetupValues]
-as
+AS
 
 SELECT        REC_Recipe.Name AS Setup,line.part AS Line, ProdItem.Name AS SetupAttribute
              ,REC_RecipeValue.Value AS RecipeValue, Units
@@ -25,5 +26,6 @@ FROM            REC_ProdItemValue ProdItem INNER JOIN
                          ProdItem.ProdItemUUID = REC_SubProdItemValue.ProdItemUUID
 						 CROSS APPLY dbo.usf_SplitString(ItemPath,'\') Line
 						 INNER JOIN  dbo.vInterfaceMachineNames M ON m.MachineName = line.part
+WHERE ISNUMERIC(ProdItem.Description) = 1
 
 GO
