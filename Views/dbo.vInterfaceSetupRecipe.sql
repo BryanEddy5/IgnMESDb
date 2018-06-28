@@ -6,6 +6,7 @@ GO
 
 
 
+
 CREATE VIEW [dbo].[vInterfaceSetupRecipe]
 AS
 SELECT        dbo.REC_ProdItem.ItemPath,REC_Recipe.Name AS Setup, REC_ProdItemValue.Name AS ProdItemValue, 
@@ -20,5 +21,5 @@ FROM            REC_ProdItemValue INNER JOIN
                          REC_ProdItemValue.ProdItemValueUUID = REC_RecipeValue.ProdItemValueUUID INNER JOIN
                          REC_SubProdItemValue ON REC_ProdItemValue.ProdItemValueUUID = REC_SubProdItemValue.ProdItemValueUUID AND 
                          REC_ProdItemValue.ProdItemUUID = REC_SubProdItemValue.ProdItemUUID
-WHERE ISNUMERIC(dbo.REC_ProdItemValue.Description) =1
+--WHERE ISNUMERIC(dbo.REC_ProdItemValue.Description) =1
 GO

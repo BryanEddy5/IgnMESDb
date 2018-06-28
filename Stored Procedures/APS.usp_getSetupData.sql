@@ -94,6 +94,9 @@ BEGIN
 		THROW;
 	END CATCH
 
+
+	EXEC usp_InsertEngineeringAssist
+
 END
 
 GO
