@@ -4,6 +4,7 @@ SET ANSI_NULLS ON
 GO
 
 
+
 /*
 Author:		Bryan Eddy
 Date:		3/16/18
@@ -15,6 +16,17 @@ Update:		Updated to point to the prod db
 
 CREATE VIEW [dbo].[vMachineSetups]
 AS
-SELECT        *
+SELECT        MachineID,
+              MachineName,
+              AttributeID,
+              AttributeDesc,
+              AttributeName,
+              SetupNumber,
+              AttributeValue,
+              AttributeUOM,
+              AttributeGroupID,
+              AttributeGroupDesc,
+              GroupViewOrder,
+              AttributeViewOrder
 FROM            [NAACAB-SCH01].PlanetTogether_Data_Prod.Setup.vInterfaceRecipeManagementSystem
 GO
